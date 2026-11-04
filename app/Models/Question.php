@@ -28,13 +28,15 @@ class Question extends Model
      *
      * @return array<string, string>
      */
-    protected function casts(): array{
+    protected function casts(): array
+    {
         return [
             'order' => 'integer',
         ];
     }
 
-    public function exam(): BelongsTo{
+    public function exam(): BelongsTo
+    {
         return $this->belongsTo(Exam::class);
     }
 
@@ -43,7 +45,8 @@ class Question extends Model
      *
      * @return array<string, string>
      */
-    public function getOptionsAttribute(): array{
+    public function getOptionsAttribute(): array
+    {
         return [
             'A' => $this->option_a,
             'B' => $this->option_b,

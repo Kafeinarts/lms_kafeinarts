@@ -27,6 +27,33 @@
                         @csrf
 
                         <div class="form-group">
+                            <label class="font-weight-bold text-gray-700">Kelas <span class="text-danger">*</span></label>
+                            <select name="kelas_id" id="kelas_id" class="form-control @error('kelas_id') is-invalid @enderror" required onchange="fetchStudents(this.value)">
+                                <option value="" disabled {{ old('kelas_id') ? '' : 'selected' }}>-- Pilih Kelas --</option>
+                                @foreach ($kelasOptions as $kelasId => $kelasName)
+                                    <option value="{{ $kelasId }}" {{ (string) old('kelas_id') === (string) $kelasId ? 'selected' : '' }}>
+                                        {{ $kelasName }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('kelas_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <script>
+                            function fetchStudents(kelasId) {
+                                $.ajax({
+                                    url: '{{ route("pelanggaran.create") }}',
+                                    data: { kelas_id: kelasId },
+                                    success: function(html) {
+                                        $('#student_id').html(html);
+                                    }
+                                });
+                            }
+                        </script>
+
+                        <div class="form-group">
                             <label for="student_id" class="font-weight-bold text-gray-700">Siswa <span class="text-danger">*</span></label>
                             <select name="student_id" id="student_id" class="form-control @error('student_id') is-invalid @enderror" required>
                                 <option value="" disabled {{ old('student_id') ? '' : 'selected' }}>-- Pilih Siswa --</option>

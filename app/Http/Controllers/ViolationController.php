@@ -29,10 +29,23 @@ class ViolationController extends Controller
     /**
      * Show the form for reporting a violation.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
+        $kelasId = $request->integer('kelas_id');
+
+        $query = User::where('role', 'murid')->with('kelas');
+        if ($kelasId) {
+            $query->where('kelas_id', $kelasId);
+        }
+
         return view('pages.pelanggaran.create', [
-            'students' => User::where('role', 'murid')->with('kelas')->orderBy('name')->get(),
+            'students' => $query->orderBy('name')->get(),
+            'kelasId' => $kelasId,
+            'kelasOptions' => User::where('role', 'murid')
+                ->with('kelas')
+                ->distinct()
+                ->pluck('kelas.name', 'kelas_id')
+                ->mapWithIds(),
         ]);
     }
 

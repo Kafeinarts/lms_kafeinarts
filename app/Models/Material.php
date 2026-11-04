@@ -32,28 +32,33 @@ class Material extends Model
      *
      * @return array<string, string>
      */
-    protected function casts(): array{
+    protected function casts(): array
+    {
         return [
             'is_published' => 'boolean',
         ];
     }
 
-    public function author(): BelongsTo{
+    public function author(): BelongsTo
+    {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function kelas(): BelongsTo{
+    public function kelas(): BelongsTo
+    {
         return $this->belongsTo(Kelas::class);
     }
 
-    public function mapel(): BelongsTo{
+    public function mapel(): BelongsTo
+    {
         return $this->belongsTo(Mapel::class);
     }
 
     /**
      * Check whether a student can access this material (same grade level or general material).
      */
-    public function isAccessibleBy(User $user): bool{
+    public function isAccessibleBy(User $user): bool
+    {
         if ($this->kelas_id === null) {
             return true;
         }
@@ -65,7 +70,8 @@ class Material extends Model
         return $this->kelas->tingkat === $user->kelas->tingkat;
     }
 
-    public function getExcerptAttribute(): string{
+    public function getExcerptAttribute(): string
+    {
         return Str::limit(strip_tags((string) $this->body), 120);
     }
 
@@ -74,7 +80,8 @@ class Material extends Model
      *
      * CKEditor stores HTML, while legacy/plain materials store plain text.
      */
-    public function getRenderedBodyAttribute(): string{
+    public function getRenderedBodyAttribute(): string
+    {
         $body = (string) $this->body;
 
         if ($body === '') {
@@ -95,7 +102,8 @@ class Material extends Model
      *
      * @return array<int, string>
      */
-    public function embeddedImagePaths(): array{
+    public function embeddedImagePaths(): array
+    {
         $paths = [];
 
         if (! preg_match_all('/(?:src|href)="([^"]+)"/i', (string) $this->body, $matches)) {
