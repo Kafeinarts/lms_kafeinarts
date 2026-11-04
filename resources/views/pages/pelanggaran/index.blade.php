@@ -31,6 +31,7 @@
                             <th>Tanggal</th>
                             <th>Siswa</th>
                             <th>Keterangan Pelanggaran</th>
+                            <th style="width: 90px;" class="text-center">Poin</th>
                             <th style="width: 130px;" class="text-center">Tujuan</th>
                             <th>Dilaporkan Oleh</th>
                         </tr>
@@ -52,6 +53,9 @@
                                 </td>
                                 <td class="align-middle">{{ $violation->description }}</td>
                                 <td class="text-center align-middle">
+                                    <span class="badge badge-light border px-2 py-1">{{ $violation->points }} poin</span>
+                                </td>
+                                <td class="text-center align-middle">
                                     <span class="badge {{ $violation->room === 'bk' ? 'badge-danger' : 'badge-warning' }} px-2 py-1">
                                         {{ $violation->room_name }}
                                     </span>
@@ -60,7 +64,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-4">Belum ada catatan pelanggaran.</td>
+                                <td colspan="7" class="text-center text-muted py-4">Belum ada catatan pelanggaran.</td>
                             </tr>
                         @endforelse
                     </tbody>

@@ -70,6 +70,26 @@
                         </a>
                     </li>
                     <li class="list-group-item p-0 mb-1">
+                        <a href="{{ route('presensi.index') }}" class="d-flex align-items-center text-gray-800">
+                            <i class="fas fa-fw fa-calendar-check mr-2 text-primary"></i> Presensi
+                        </a>
+                    </li>
+                    <li class="list-group-item p-0 mb-1">
+                        <a href="{{ route('nilai.index') }}" class="d-flex align-items-center text-gray-800">
+                            <i class="fas fa-fw fa-chart-line mr-2 text-primary"></i> Nilai &amp; Rapor
+                        </a>
+                    </li>
+                    <li class="list-group-item p-0 mb-1">
+                        <a href="{{ route('forum.index') }}" class="d-flex align-items-center text-gray-800">
+                            <i class="fas fa-fw fa-comments mr-2 text-primary"></i> Forum Diskusi
+                        </a>
+                    </li>
+                    <li class="list-group-item p-0 mb-1">
+                        <a href="{{ route('pengumuman.index') }}" class="d-flex align-items-center text-gray-800">
+                            <i class="fas fa-fw fa-bullhorn mr-2 text-primary"></i> Pengumuman
+                        </a>
+                    </li>
+                    <li class="list-group-item p-0 mb-1">
                         <a href="{{ route('notifications.index') }}" class="d-flex align-items-center text-gray-800">
                             <i class="fas fa-fw fa-bell mr-2 text-primary"></i> Notifikasi
                         </a>
@@ -89,6 +109,11 @@
                         <li class="list-group-item p-0 mb-1">
                             <a href="{{ route('pelanggaran.index') }}" class="d-flex align-items-center text-gray-800">
                                 <i class="fas fa-fw fa-exclamation-triangle mr-2 text-warning"></i> Pelanggaran Siswa
+                            </a>
+                        </li>
+                        <li class="list-group-item p-0 mb-1">
+                            <a href="{{ route('bk.index') }}" class="d-flex align-items-center text-gray-800">
+                                <i class="fas fa-fw fa-hand-holding-heart mr-2 text-warning"></i> Bimbingan Konseling
                             </a>
                         </li>
                     @endif

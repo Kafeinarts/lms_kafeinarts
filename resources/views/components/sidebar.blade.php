@@ -5,6 +5,15 @@
         || request()->routeIs('kelas.*')
         || request()->routeIs('mapel.*')
         || request()->routeIs('wali.*');
+    $akademikActive = request()->routeIs('materis.*')
+        || request()->routeIs('exams.*')
+        || request()->routeIs('presensi.*')
+        || request()->routeIs('nilai.*')
+        || request()->routeIs('jadwal.*')
+        || request()->routeIs('penugasan.*')
+        || request()->routeIs('forum.*');
+    $kesiswaanActive = request()->routeIs('pelanggaran.*')
+        || request()->routeIs('bk.*');
 @endphp
 
 <ul class="navbar-nav bg-gradient-dark sidebar sidebar-dark accordion" id="accordionSidebar">
@@ -41,50 +50,88 @@
         </a>
     </li>
 
+    <li class="nav-item {{ request()->routeIs('pengumuman.*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('pengumuman.index') }}">
+            <i class="fas fa-fw fa-bullhorn"></i>
+            <span>Pengumuman</span>
+        </a>
+    </li>
+
     <!-- Heading -->
     <div class="sidebar-heading">
-        LMS
+        Akademik &amp; LMS
     </div>
 
-    <!-- Nav Item - Materi -->
-    <li class="nav-item {{ request()->routeIs('materis.*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('materis.index') }}">
-            <i class="fas fa-fw fa-book-open"></i>
-            <span>Materi</span>
+    <li class="nav-item {{ $akademikActive ? 'active' : '' }}">
+        <a class="nav-link {{ $akademikActive ? '' : 'collapsed' }}" href="#"
+            data-toggle="collapse" data-target="#collapseAkademik"
+            aria-expanded="{{ $akademikActive ? 'true' : 'false' }}" aria-controls="collapseAkademik">
+            <i class="fas fa-fw fa-graduation-cap"></i>
+            <span>Akademik &amp; LMS</span>
         </a>
-    </li>
-
-    <!-- Nav Item - Tugas & Ujian -->
-    <li class="nav-item {{ request()->routeIs('exams.*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('exams.index') }}">
-            <i class="fas fa-fw fa-clipboard-list"></i>
-            <span>Tugas &amp; Ujian</span>
-        </a>
-    </li>
-
-    <!-- Nav Item - Jadwal Pengajaran -->
-    <li class="nav-item {{ request()->routeIs('jadwal.*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('jadwal.index') }}">
-            <i class="fas fa-fw fa-calendar-alt"></i>
-            <span>Jadwal Mengajar</span>
-        </a>
-    </li>
-
-    <!-- Nav Item - Kelas Diajar -->
-    <li class="nav-item {{ request()->routeIs('penugasan.*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('penugasan.index') }}">
-            <i class="fas fa-fw fa-chalkboard"></i>
-            <span>Kelas Diajar</span>
-        </a>
+        <div id="collapseAkademik" class="collapse {{ $akademikActive ? 'show' : '' }}"
+            aria-labelledby="headingAkademik" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Pembelajaran:</h6>
+                <a class="collapse-item {{ request()->routeIs('materis.*') ? 'active' : '' }}"
+                    href="{{ route('materis.index') }}">
+                    <i class="fas fa-book-open fa-sm mr-1"></i> Materi
+                </a>
+                <a class="collapse-item {{ request()->routeIs('exams.*') ? 'active' : '' }}"
+                    href="{{ route('exams.index') }}">
+                    <i class="fas fa-clipboard-list fa-sm mr-1"></i> Tugas &amp; Ujian
+                </a>
+                <a class="collapse-item {{ request()->routeIs('presensi.*') ? 'active' : '' }}"
+                    href="{{ route('presensi.index') }}">
+                    <i class="fas fa-calendar-check fa-sm mr-1"></i> Presensi
+                </a>
+                <a class="collapse-item {{ request()->routeIs('nilai.*') ? 'active' : '' }}"
+                    href="{{ route('nilai.index') }}">
+                    <i class="fas fa-chart-line fa-sm mr-1"></i> Nilai &amp; Rapor
+                </a>
+                <a class="collapse-item {{ request()->routeIs('forum.*') ? 'active' : '' }}"
+                    href="{{ route('forum.index') }}">
+                    <i class="fas fa-comments fa-sm mr-1"></i> Forum Diskusi
+                </a>
+                <h6 class="collapse-header">Jadwal:</h6>
+                <a class="collapse-item {{ request()->routeIs('jadwal.*') ? 'active' : '' }}"
+                    href="{{ route('jadwal.index') }}">
+                    <i class="fas fa-calendar-alt fa-sm mr-1"></i> Jadwal Mengajar
+                </a>
+                <a class="collapse-item {{ request()->routeIs('penugasan.*') ? 'active' : '' }}"
+                    href="{{ route('penugasan.index') }}">
+                    <i class="fas fa-chalkboard fa-sm mr-1"></i> Kelas Diajar
+                </a>
+            </div>
+        </div>
     </li>
 
     @if ($currentUser && $currentUser->isTeacher())
-        <!-- Nav Item - Pelanggaran & Pemanggilan -->
-        <li class="nav-item {{ request()->routeIs('pelanggaran.*') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('pelanggaran.index') }}">
-                <i class="fas fa-fw fa-exclamation-triangle"></i>
-                <span>Pelanggaran Siswa</span>
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Kesiswaan
+        </div>
+
+        <li class="nav-item {{ $kesiswaanActive ? 'active' : '' }}">
+            <a class="nav-link {{ $kesiswaanActive ? '' : 'collapsed' }}" href="#"
+                data-toggle="collapse" data-target="#collapseKesiswaan"
+                aria-expanded="{{ $kesiswaanActive ? 'true' : 'false' }}" aria-controls="collapseKesiswaan">
+                <i class="fas fa-fw fa-user-shield"></i>
+                <span>Kesiswaan</span>
             </a>
+            <div id="collapseKesiswaan" class="collapse {{ $kesiswaanActive ? 'show' : '' }}"
+                aria-labelledby="headingKesiswaan" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item {{ request()->routeIs('pelanggaran.*') ? 'active' : '' }}"
+                        href="{{ route('pelanggaran.index') }}">
+                        <i class="fas fa-exclamation-triangle fa-sm mr-1"></i> Pelanggaran Siswa
+                    </a>
+                    <a class="collapse-item {{ request()->routeIs('bk.*') ? 'active' : '' }}"
+                        href="{{ route('bk.index') }}">
+                        <i class="fas fa-hand-holding-heart fa-sm mr-1"></i> Bimbingan Konseling
+                    </a>
+                </div>
+            </div>
         </li>
     @endif
 

@@ -16,8 +16,21 @@ class Violation extends Model
         'student_id',
         'reported_by',
         'description',
+        'points',
         'room',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'points' => 'integer',
+        ];
+    }
 
     public function student(): BelongsTo
     {

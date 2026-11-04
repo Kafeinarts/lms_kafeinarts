@@ -44,6 +44,7 @@ class ViolationController extends Controller
         $validated = $request->validate([
             'student_id' => ['required', 'exists:users,id'],
             'description' => ['required', 'string', 'max:1000'],
+            'points' => ['nullable', 'integer', 'min:0', 'max:1000'],
             'room' => ['required', 'string', 'in:bk,guru'],
         ], [
             'student_id.required' => 'Siswa wajib dipilih.',
@@ -57,6 +58,7 @@ class ViolationController extends Controller
 
         $violation = Violation::create([
             ...$validated,
+            'points' => $validated['points'] ?? 0,
             'reported_by' => $request->user()->id,
         ]);
 

@@ -53,6 +53,17 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="points" class="font-weight-bold text-gray-700">Poin Pelanggaran</label>
+                            <input type="number" name="points" id="points" value="{{ old('points', 0) }}"
+                                min="0" max="1000"
+                                class="form-control @error('points') is-invalid @enderror">
+                            <small class="form-text text-muted">Poin akan diakumulasikan pada modul Bimbingan Konseling.</small>
+                            @error('points')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
                             <label class="font-weight-bold text-gray-700">Tujuan Pemanggilan <span class="text-danger">*</span></label>
                             <div class="custom-control custom-radio mb-2">
                                 <input type="radio" id="roomBk" name="room" value="bk"

@@ -1,9 +1,15 @@
 <?php
 
+use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BkController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\ExamController;
+use App\Http\Controllers\GradebookController;
 use App\Http\Controllers\GuardianController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\MapelController;
@@ -185,6 +191,159 @@ Route::middleware('auth')->group(function () {
             'store',
         ])->name('pelanggaran.store');
     });
+
+    // Presensi: history for students, management for guru & superadmin
+    Route::middleware('teacher')->group(function () {
+        Route::get('/presensi/input', [
+            AttendanceController::class,
+            'create',
+        ])->name('presensi.create');
+        Route::post('/presensi', [
+            AttendanceController::class,
+            'store',
+        ])->name('presensi.store');
+        Route::get('/presensi/rekap', [
+            AttendanceController::class,
+            'recap',
+        ])->name('presensi.recap');
+        Route::get('/presensi/rekap/export', [
+            AttendanceController::class,
+            'exportRecap',
+        ])->name('presensi.recap.export');
+    });
+    Route::get('/presensi', [AttendanceController::class, 'index'])->name(
+        'presensi.index'
+    );
+    Route::get('/presensi/{attendance}', [
+        AttendanceController::class,
+        'show',
+    ])->name('presensi.show');
+
+    // Nilai & Rapor (Gradebook)
+    Route::middleware('teacher')->group(function () {
+        Route::get('/nilai/bobot', [
+            GradebookController::class,
+            'weights',
+        ])->name('nilai.weights');
+        Route::post('/nilai/bobot', [
+            GradebookController::class,
+            'storeWeights',
+        ])->name('nilai.weights.store');
+        Route::get('/nilai/input', [
+            GradebookController::class,
+            'input',
+        ])->name('nilai.input');
+        Route::post('/nilai/input', [
+            GradebookController::class,
+            'storeGrades',
+        ])->name('nilai.input.store');
+    });
+    Route::middleware('superadmin')->group(function () {
+        Route::get('/nilai/tahun-ajaran', [
+            AcademicYearController::class,
+            'index',
+        ])->name('nilai.academic-years');
+        Route::post('/nilai/tahun-ajaran', [
+            AcademicYearController::class,
+            'store',
+        ])->name('nilai.academic-years.store');
+        Route::patch('/nilai/tahun-ajaran/{academicYear}/aktifkan', [
+            AcademicYearController::class,
+            'activate',
+        ])->name('nilai.academic-years.activate');
+    });
+    Route::get('/nilai/rapor/{student}/pdf', [
+        GradebookController::class,
+        'raporPdf',
+    ])->name('nilai.rapor.pdf');
+    Route::get('/nilai/rapor/{student?}', [
+        GradebookController::class,
+        'rapor',
+    ])->name('nilai.rapor');
+    Route::get('/nilai', [GradebookController::class, 'index'])->name(
+        'nilai.index'
+    );
+
+    // Pengumuman (Announcements)
+    Route::middleware('teacher')->group(function () {
+        Route::get('/pengumuman/create', [
+            AnnouncementController::class,
+            'create',
+        ])->name('pengumuman.create');
+        Route::post('/pengumuman', [
+            AnnouncementController::class,
+            'store',
+        ])->name('pengumuman.store');
+        Route::get('/pengumuman/{announcement}/edit', [
+            AnnouncementController::class,
+            'edit',
+        ])->name('pengumuman.edit');
+        Route::put('/pengumuman/{announcement}', [
+            AnnouncementController::class,
+            'update',
+        ])->name('pengumuman.update');
+        Route::delete('/pengumuman/{announcement}', [
+            AnnouncementController::class,
+            'destroy',
+        ])->name('pengumuman.destroy');
+    });
+    Route::get('/pengumuman', [
+        AnnouncementController::class,
+        'index',
+    ])->name('pengumuman.index');
+    Route::get('/pengumuman/{announcement}', [
+        AnnouncementController::class,
+        'show',
+    ])->name('pengumuman.show');
+
+    // Bimbingan Konseling: poin pelanggaran, prestasi, dan sesi konseling
+    Route::middleware('teacher')->group(function () {
+        Route::get('/bk', [BkController::class, 'index'])->name('bk.index');
+        Route::get('/bk/konseling/create', [
+            BkController::class,
+            'createSession',
+        ])->name('bk.sessions.create');
+        Route::post('/bk/konseling', [
+            BkController::class,
+            'storeSession',
+        ])->name('bk.sessions.store');
+        Route::get('/bk/prestasi/create', [
+            BkController::class,
+            'createAchievement',
+        ])->name('bk.achievements.create');
+        Route::post('/bk/prestasi', [
+            BkController::class,
+            'storeAchievement',
+        ])->name('bk.achievements.store');
+    });
+
+    // Forum diskusi per mata pelajaran
+    Route::get('/forum', [DiscussionController::class, 'index'])->name(
+        'forum.index'
+    );
+    Route::get('/forum/create', [
+        DiscussionController::class,
+        'create',
+    ])->name('forum.create');
+    Route::post('/forum', [DiscussionController::class, 'store'])->name(
+        'forum.store'
+    );
+    Route::delete('/forum/reply/{reply}', [
+        DiscussionController::class,
+        'destroyReply',
+    ])->name('forum.reply.destroy');
+    Route::get('/forum/{topic}', [
+        DiscussionController::class,
+        'show',
+    ])->name('forum.show');
+    Route::post('/forum/{topic}/reply', [
+        DiscussionController::class,
+        'reply',
+    ])->name('forum.reply');
+    Route::delete('/forum/{topic}', [
+        DiscussionController::class,
+        'destroyTopic',
+    ])->name('forum.destroy');
 
     Route::get('/materis/{materi}', [MateriController::class, 'show'])->name(
         'materis.show'

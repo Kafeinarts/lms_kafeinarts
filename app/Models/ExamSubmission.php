@@ -2,11 +2,16 @@
 
 namespace App\Models;
 
+use Database\Factories\ExamSubmissionFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ExamSubmission extends Model
 {
+    /** @use HasFactory<ExamSubmissionFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'exam_id',
         'user_id',
