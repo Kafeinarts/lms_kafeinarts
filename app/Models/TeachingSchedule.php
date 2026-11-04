@@ -19,16 +19,14 @@ class TeachingSchedule extends Model
         'end_time',
     ];
 
-    public function assignment(): BelongsTo
-    {
+    public function assignment(): BelongsTo{
         return $this->belongsTo(TeachingAssignment::class, 'assignment_id');
     }
 
     /**
      * Get readable day label.
      */
-    public function getDayNameAttribute(): string
-    {
+    public function getDayNameAttribute(): string{
         return match ($this->day) {
             'senin' => 'Senin',
             'selasa' => 'Selasa',

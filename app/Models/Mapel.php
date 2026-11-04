@@ -18,8 +18,7 @@ class Mapel extends Model
         'name',
     ];
 
-    public function teachingAssignments(): HasMany
-    {
+    public function teachingAssignments(): HasMany{
         return $this->hasMany(TeachingAssignment::class);
     }
 
@@ -28,8 +27,7 @@ class Mapel extends Model
      *
      * @return BelongsToMany<User, TeachingAssignment>
      */
-    public function assignedTeachers(): BelongsToMany
-    {
+    public function assignedTeachers(): BelongsToMany{
         return $this->belongsToMany(User::class, 'teaching_assignments', 'mapel_id', 'teacher_id')
             ->orderBy('name')
             ->distinct();
