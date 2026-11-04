@@ -22,23 +22,18 @@ class ExamController extends Controller
     {
         $type = $request->string('type')->toString();
         $type = in_array($type, ['tugas', 'ujian'], true) ? $type : 'tugas';
-
         $query = Exam::withCount('questions')->with(['author', 'mapel'])
             ->where('type', $type)
             ->latest();
-
         if ($request->filled('q')) {
             $query->where('title', 'like', '%'.$request->string('q').'%');
         }
-
         if ($request->filled('mapel')) {
             $query->where('mapel_id', $request->integer('mapel'));
         }
-
         if ($request->filled('guru')) {
             $query->where('user_id', $request->integer('guru'));
         }
-
         $exams = $query->paginate(10)->withQueryString();
 
         $selectedMapel = $request->filled('mapel')
@@ -155,11 +150,8 @@ class ExamController extends Controller
             return redirect()->route('exams.show', $exam)
                 ->with('error', 'Anda sudah pernah mengirim jawaban untuk tugas/ujian ini.');
         }
-
         $questions = $exam->questions;
-
         abort_if($questions->isEmpty(), 403, 'Tugas/ujian ini belum memiliki soal.');
-
         $validated = $request->validate([
             'answers' => ['required', 'array', 'min:1'],
             'answers.*' => ['string', Rule::in(['A', 'B', 'C', 'D'])],
@@ -168,7 +160,6 @@ class ExamController extends Controller
             'answers.min' => 'Pilih minimal satu jawaban sebelum mengirim.',
             'answers.*.in' => 'Jawaban harus salah satu dari A, B, C, atau D.',
         ]);
-
         $answers = $validated['answers'];
         $correctCount = 0;
 
@@ -177,9 +168,7 @@ class ExamController extends Controller
                 $correctCount++;
             }
         }
-
         $score = (int) round($correctCount / $questions->count() * 100);
-
         ExamSubmission::create([
             'exam_id' => $exam->id,
             'user_id' => $user->id,
@@ -187,17 +176,14 @@ class ExamController extends Controller
             'score' => $score,
             'submitted_at' => now(),
         ]);
-
         ActivityLog::record(
             'exam.submitted',
             "{$exam->type_label} '{$exam->title}' dikirim oleh {$user->name} — nilai {$score}",
             $exam
         );
-
         return redirect()->route('exams.show', $exam)
             ->with('success', "Jawaban berhasil dikirim! Nilai Anda: {$score}");
     }
-
     /**
      * Show the form for editing the specified exam.
      */
@@ -210,7 +196,6 @@ class ExamController extends Controller
             'mapels' => Mapel::orderBy('name')->get(),
         ]);
     }
-
     /**
      * Update the specified exam and its questions.
      */
@@ -234,7 +219,6 @@ class ExamController extends Controller
             'questions.min' => 'Minimal harus ada 1 soal.',
             'questions.*.correct_answer.in' => 'Jawaban benar harus salah satu dari A, B, C, atau D.',
         ]);
-
         DB::transaction(function () use ($exam, $validated) {
             $exam->update([
                 'title' => $validated['title'],
@@ -244,9 +228,7 @@ class ExamController extends Controller
                 'duration_minutes' => $validated['duration_minutes'] ?? null,
                 'available_at' => $validated['available_at'] ?? $exam->available_at,
             ]);
-
             $exam->questions()->delete();
-
             foreach ($validated['questions'] as $index => $question) {
                 Question::create([
                     'exam_id' => $exam->id,
@@ -260,9 +242,7 @@ class ExamController extends Controller
                 ]);
             }
         });
-
         ActivityLog::record('exam.updated', "{$exam->type_label} '{$exam->title}' diperbarui", $exam);
-
         return redirect()->route('exams.index')->with('success', 'Tugas/Ujian berhasil diperbarui!');
     }
 
@@ -272,9 +252,7 @@ class ExamController extends Controller
     public function destroy(Exam $exam): RedirectResponse
     {
         ActivityLog::record('exam.deleted', "{$exam->type_label} '{$exam->title}' dihapus", null);
-
         $exam->delete();
-
         return redirect()->route('exams.index')->with('success', 'Tugas/Ujian berhasil dihapus.');
     }
 }
