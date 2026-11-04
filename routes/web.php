@@ -12,6 +12,7 @@ use App\Http\Controllers\MateriController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SchoolProfileController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeachingAssignmentController;
@@ -26,6 +27,9 @@ Route::get('/', function () {
         ? redirect()->route('dashboard')
         : redirect()->route('login');
 });
+
+// Public school profile (shareable, no login required)
+Route::get('/profil-sekolah', [SchoolProfileController::class, 'publicProfile'])->name('sekolah.public');
 
 // Authentication routes
 Route::prefix('auth')->group(function () {
@@ -196,6 +200,11 @@ Route::middleware('auth')->group(function () {
     // Super Admin Only: User Management, Master Data & Import
     Route::middleware('superadmin')->group(function () {
         Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity.index');
+
+        // Identitas, alamat, dan kontak sekolah
+        Route::get('/sekolah', [SchoolProfileController::class, 'edit'])->name('sekolah.edit');
+        Route::put('/sekolah', [SchoolProfileController::class, 'update'])->name('sekolah.update');
+        Route::delete('/sekolah/logo', [SchoolProfileController::class, 'removeLogo'])->name('sekolah.logo.destroy');
 
         Route::resource('users', UserController::class)->except(['show']);
 

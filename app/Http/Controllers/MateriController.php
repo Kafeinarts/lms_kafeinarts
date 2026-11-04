@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 class MateriController extends Controller
 {
     /**
-     * Display a listing of materials (blog-style).
+     * Display a listing of materials, grouped by mata pelajaran.
      */
     public function index(Request $request): View
     {
@@ -56,11 +56,48 @@ class MateriController extends Controller
             default => $query->orderByDesc('materials.created_at'),
         };
 
-        $materials = $query->paginate(9)->withQueryString();
+        $query->orderByDesc('materials.created_at');
+
+        $mapels = Mapel::orderBy('name')->get();
+        $selectedMapel = $request->filled('mapel')
+            ? $mapels->firstWhere('id', $request->integer('mapel'))
+            : null;
+
+        // Tanpa filter/pencarian: tampilkan kartu mata pelajaran yang memuat materinya.
+        if (! $request->filled('mapel') && ! $request->filled('q')) {
+            $allMaterials = $query->get();
+
+            $mapelGroups = $mapels
+                ->map(function (Mapel $mapel) use ($allMaterials) {
+                    $owned = $allMaterials->where('mapel_id', $mapel->id)->values();
+
+                    return [
+                        'mapel' => $mapel,
+                        'materials' => $owned->take(6),
+                        'total' => $owned->count(),
+                    ];
+                })
+                ->filter(fn (array $group) => $group['total'] > 0)
+                ->values();
+
+            $unassigned = $allMaterials->whereNull('mapel_id')->values();
+
+            return view('pages.materis.index', [
+                'mode' => 'mapels',
+                'mapels' => $mapels,
+                'mapelGroups' => $mapelGroups,
+                'unassignedMaterials' => $unassigned->take(6),
+                'unassignedTotal' => $unassigned->count(),
+                'selectedMapel' => null,
+                'materials' => null,
+            ]);
+        }
 
         return view('pages.materis.index', [
-            'materials' => $materials,
-            'mapels' => Mapel::orderBy('name')->get(),
+            'mode' => 'list',
+            'materials' => $query->paginate(9)->withQueryString(),
+            'mapels' => $mapels,
+            'selectedMapel' => $selectedMapel,
         ]);
     }
 

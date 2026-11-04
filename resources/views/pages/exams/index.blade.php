@@ -20,20 +20,22 @@
         $tabParams = request()->query();
         unset($tabParams['page']);
     @endphp
-    <ul class="nav nav-tabs mb-3" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link {{ $type === 'tugas' ? 'active' : '' }}"
-                href="{{ route('exams.index', array_merge($tabParams, ['type' => 'tugas'])) }}">
-                <i class="fas fa-tasks mr-1"></i> Tugas
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ $type === 'ujian' ? 'active' : '' }}"
-                href="{{ route('exams.index', array_merge($tabParams, ['type' => 'ujian'])) }}">
-                <i class="fas fa-file-signature mr-1"></i> Ujian
-            </a>
-        </li>
-    </ul>
+    <div class="exam-tabs mb-3" role="tablist" aria-label="Navigasi Tugas atau Ujian">
+        <a class="exam-tab {{ $type === 'tugas' ? 'is-active' : '' }}" role="tab"
+            aria-selected="{{ $type === 'tugas' ? 'true' : 'false' }}"
+            href="{{ route('exams.index', array_merge($tabParams, ['type' => 'tugas'])) }}">
+            <i class="fas fa-tasks"></i>
+            <span>Tugas</span>
+            <span class="exam-tab-count">{{ $typeCounts['tugas'] }}</span>
+        </a>
+        <a class="exam-tab {{ $type === 'ujian' ? 'is-active' : '' }}" role="tab"
+            aria-selected="{{ $type === 'ujian' ? 'true' : 'false' }}"
+            href="{{ route('exams.index', array_merge($tabParams, ['type' => 'ujian'])) }}">
+            <i class="fas fa-file-signature"></i>
+            <span>Ujian</span>
+            <span class="exam-tab-count">{{ $typeCounts['ujian'] }}</span>
+        </a>
+    </div>
 
     <!-- Filters -->
     <div class="card shadow mb-4">

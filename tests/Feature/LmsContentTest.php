@@ -279,6 +279,43 @@ test('materials can be filtered by mapel and sorted by teacher', function () {
     $response->assertSee('Semua Mapel (Show All)');
 });
 
+test('materi index shows mata pelajaran cards containing their materials', function () {
+    $guru = User::factory()->guru()->create();
+    $mapel = Mapel::factory()->create(['name' => 'Matematika']);
+    Material::factory()->create([
+        'title' => 'Aljabar Dasar',
+        'user_id' => $guru->id,
+        'mapel_id' => $mapel->id,
+    ]);
+
+    $superadmin = User::factory()->superadmin()->create();
+
+    $response = $this->actingAs($superadmin)->get(route('materis.index'));
+
+    $response->assertStatus(200);
+    $response->assertSee('1 mata pelajaran');
+    $response->assertSee('Matematika');
+    $response->assertSee('Aljabar Dasar');
+    $response->assertSee('Lihat semua (1)');
+});
+
+test('exams index provides tugas and ujian tabs with counts', function () {
+    Exam::factory()->tugas()->create();
+    Exam::factory()->ujian()->create();
+    Exam::factory()->ujian()->create();
+
+    $superadmin = User::factory()->superadmin()->create();
+
+    $response = $this->actingAs($superadmin)->get(route('exams.index'));
+
+    $response->assertStatus(200);
+    $response->assertSee('exam-tabs', false);
+    $response->assertSee('Tugas');
+    $response->assertSee('Ujian');
+    $response->assertSee('<span class="exam-tab-count">1</span>', false);
+    $response->assertSee('<span class="exam-tab-count">2</span>', false);
+});
+
 test('jadwal page provides a weekly calendar with teacher, mapel, and time', function () {
     $assignment = TeachingAssignment::factory()->create();
     TeachingSchedule::factory()->create([

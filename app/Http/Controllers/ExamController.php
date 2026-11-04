@@ -22,19 +22,31 @@ class ExamController extends Controller
     {
         $type = $request->string('type')->toString();
         $type = in_array($type, ['tugas', 'ujian'], true) ? $type : 'tugas';
-        $query = Exam::withCount('questions')->with(['author', 'mapel'])
-            ->where('type', $type)
-            ->latest();
+
+        $baseQuery = Exam::query();
         if ($request->filled('q')) {
-            $query->where('title', 'like', '%'.$request->string('q').'%');
+            $baseQuery->where('title', 'like', '%'.$request->string('q').'%');
         }
         if ($request->filled('mapel')) {
-            $query->where('mapel_id', $request->integer('mapel'));
+            $baseQuery->where('mapel_id', $request->integer('mapel'));
         }
         if ($request->filled('guru')) {
-            $query->where('user_id', $request->integer('guru'));
+            $baseQuery->where('user_id', $request->integer('guru'));
         }
-        $exams = $query->paginate(10)->withQueryString();
+
+        // Hitung jumlah tiap jenis dengan filter yang sama agar tab tetap informatif.
+        $typeCounts = (clone $baseQuery)
+            ->selectRaw('type, COUNT(*) as total')
+            ->groupBy('type')
+            ->pluck('total', 'type');
+
+        $exams = (clone $baseQuery)
+            ->withCount('questions')
+            ->with(['author', 'mapel'])
+            ->where('type', $type)
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         $selectedMapel = $request->filled('mapel')
             ? Mapel::find($request->integer('mapel'))
@@ -43,6 +55,10 @@ class ExamController extends Controller
         return view('pages.exams.index', [
             'exams' => $exams,
             'type' => $type,
+            'typeCounts' => [
+                'tugas' => (int) $typeCounts->get('tugas', 0),
+                'ujian' => (int) $typeCounts->get('ujian', 0),
+            ],
             'mapels' => Mapel::orderBy('name')->get(),
             'teachers' => $selectedMapel?->assignedTeachers ?? collect(),
         ]);
@@ -181,9 +197,11 @@ class ExamController extends Controller
             "{$exam->type_label} '{$exam->title}' dikirim oleh {$user->name} — nilai {$score}",
             $exam
         );
+
         return redirect()->route('exams.show', $exam)
             ->with('success', "Jawaban berhasil dikirim! Nilai Anda: {$score}");
     }
+
     /**
      * Show the form for editing the specified exam.
      */
@@ -196,6 +214,7 @@ class ExamController extends Controller
             'mapels' => Mapel::orderBy('name')->get(),
         ]);
     }
+
     /**
      * Update the specified exam and its questions.
      */
@@ -243,6 +262,7 @@ class ExamController extends Controller
             }
         });
         ActivityLog::record('exam.updated', "{$exam->type_label} '{$exam->title}' diperbarui", $exam);
+
         return redirect()->route('exams.index')->with('success', 'Tugas/Ujian berhasil diperbarui!');
     }
 
@@ -253,6 +273,7 @@ class ExamController extends Controller
     {
         ActivityLog::record('exam.deleted', "{$exam->type_label} '{$exam->title}' dihapus", null);
         $exam->delete();
+
         return redirect()->route('exams.index')->with('success', 'Tugas/Ujian berhasil dihapus.');
     }
 }
