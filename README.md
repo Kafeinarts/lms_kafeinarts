@@ -411,4 +411,8 @@ vendor/bin/pint --dirty --format agent
 
 ## 📄 License
 
+<<<<<<< HEAD
 Dirilis di bawah lisensi **MIT**.
+=======
+Dirilis di bawah lisensi **MIT**.
+>>>>>>> fa1dbf474b10860b067a62e073a532680e5687c9
