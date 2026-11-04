@@ -82,6 +82,7 @@ class ActivityLog extends Model
             'guardian.updated' => 'Wali murid diperbarui',
             'guardian.deleted' => 'Wali murid dihapus',
             'violation.created' => 'Pelanggaran dicatat',
+            'school.updated' => 'Informasi sekolah diperbarui',
             default => Str::of($this->action)->replace(['.', '_'], ' ')->title(),
         };
     }

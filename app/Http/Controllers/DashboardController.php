@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ActivityLog;
 use App\Models\Exam;
 use App\Models\Material;
+use App\Models\SchoolProfile;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +32,7 @@ class DashboardController extends Controller
 
         return view('pages.Dashboard', [
             'user' => $user,
+            'school' => SchoolProfile::current(),
             'totalUsers' => $roleCounts->sum(),
             'totalSuperAdmins' => (int) $roleCounts->get('superadmin', 0),
             'totalGuru' => (int) $roleCounts->get('guru', 0),

@@ -1,17 +1,39 @@
+@php
+    $currentUser = Auth::user();
+    $masterDataActive = request()->routeIs('siswa.*')
+        || request()->routeIs('guru.*')
+        || request()->routeIs('kelas.*')
+        || request()->routeIs('mapel.*')
+        || request()->routeIs('wali.*');
+@endphp
+
 <ul class="navbar-nav bg-gradient-dark sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('dashboard') }}">
-        <div class="sidebar-brand-icon rotate-n-15">
+        <div class="sidebar-brand-icon">
             <i class="fas fa-graduation-cap"></i>
         </div>
         <div class="sidebar-brand-text mx-2">MySchool</div>
     </a>
 
-    <!-- Divider -->
-    <hr class="sidebar-divider my-0">
+    @if ($currentUser)
+        <!-- Sidebar - User -->
+        <li class="sidebar-user">
+            <img src="{{ $currentUser->avatar_url }}" alt="{{ $currentUser->name }}" class="sidebar-user-avatar">
+            <div class="sidebar-user-meta">
+                <span class="sidebar-user-name">{{ $currentUser->name }}</span>
+                <span class="sidebar-user-role">{{ $currentUser->role_name }}</span>
+            </div>
+            <a href="{{ route('profile.edit') }}" class="sidebar-user-action" title="Buka profil">
+                <i class="fas fa-user-cog"></i>
+            </a>
+        </li>
+    @endif
 
-    <!-- Nav Item - Dashboard -->
+    <!-- Menu Utama -->
+    <div class="sidebar-heading">Menu Utama</div>
+
     <li class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('dashboard') }}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
@@ -19,16 +41,13 @@
         </a>
     </li>
 
-    <!-- Divider -->
-    <hr class="sidebar-divider">
-
     <!-- Heading -->
     <div class="sidebar-heading">
         LMS
     </div>
 
     <!-- Nav Item - Materi -->
-    <li class="nav-item {{ request()->routeIs('materis.index') ? 'active' : '' }}">
+    <li class="nav-item {{ request()->routeIs('materis.*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('materis.index') }}">
             <i class="fas fa-fw fa-book-open"></i>
             <span>Materi</span>
@@ -39,7 +58,7 @@
     <li class="nav-item {{ request()->routeIs('exams.*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('exams.index') }}">
             <i class="fas fa-fw fa-clipboard-list"></i>
-            <span>Tugas & Ujian</span>
+            <span>Tugas &amp; Ujian</span>
         </a>
     </li>
 
@@ -59,7 +78,7 @@
         </a>
     </li>
 
-    @if (Auth::check() && Auth::user()->isTeacher())
+    @if ($currentUser && $currentUser->isTeacher())
         <!-- Nav Item - Pelanggaran & Pemanggilan -->
         <li class="nav-item {{ request()->routeIs('pelanggaran.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('pelanggaran.index') }}">
@@ -69,13 +88,10 @@
         </li>
     @endif
 
-    @if (Auth::check() && Auth::user()->isSuperAdmin())
-        <!-- Divider -->
-        <hr class="sidebar-divider">
-
+    @if ($currentUser && $currentUser->isSuperAdmin())
         <!-- Heading -->
         <div class="sidebar-heading">
-            Super Admin
+            Administrasi
         </div>
 
         <!-- Nav Item - User Management -->
@@ -89,7 +105,7 @@
             <div id="collapseUsers" class="collapse {{ request()->routeIs('users.*') ? 'show' : '' }}"
                 aria-labelledby="headingUsers" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Registrasi & Peran:</h6>
+                    <h6 class="collapse-header">Registrasi &amp; Peran:</h6>
                     <a class="collapse-item {{ request()->routeIs('users.index') ? 'active' : '' }}"
                         href="{{ route('users.index') }}">
                         <i class="fas fa-list fa-sm mr-1"></i> Daftar Akun
@@ -102,26 +118,15 @@
             </div>
         </li>
 
-        <!-- Nav Item - Activity Log -->
-        <li class="nav-item {{ request()->routeIs('activity.*') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('activity.index') }}">
-                <i class="fas fa-fw fa-history"></i>
-                <span>Activity Log</span>
-            </a>
-        </li>
-
         <!-- Nav Item - Master Data -->
-        <li
-            class="nav-item {{ request()->routeIs('siswa.*') || request()->routeIs('guru.*') || request()->routeIs('kelas.*') || request()->routeIs('mapel.*') || request()->routeIs('wali.*') ? 'active' : '' }}">
-            <a class="nav-link {{ request()->routeIs('siswa.*') || request()->routeIs('guru.*') || request()->routeIs('kelas.*') || request()->routeIs('mapel.*') || request()->routeIs('wali.*') ? '' : 'collapsed' }}"
-                href="#" data-toggle="collapse" data-target="#collapseMaster"
-                aria-expanded="{{ request()->routeIs('siswa.*') || request()->routeIs('guru.*') || request()->routeIs('kelas.*') || request()->routeIs('mapel.*') || request()->routeIs('wali.*') ? 'true' : 'false' }}"
-                aria-controls="collapseMaster">
+        <li class="nav-item {{ $masterDataActive ? 'active' : '' }}">
+            <a class="nav-link {{ $masterDataActive ? '' : 'collapsed' }}" href="#"
+                data-toggle="collapse" data-target="#collapseMaster"
+                aria-expanded="{{ $masterDataActive ? 'true' : 'false' }}" aria-controls="collapseMaster">
                 <i class="fas fa-fw fa-database"></i>
                 <span>Master Data</span>
             </a>
-            <div id="collapseMaster"
-                class="collapse {{ request()->routeIs('siswa.*') || request()->routeIs('guru.*') || request()->routeIs('kelas.*') || request()->routeIs('mapel.*') || request()->routeIs('wali.*') ? 'show' : '' }}"
+            <div id="collapseMaster" class="collapse {{ $masterDataActive ? 'show' : '' }}"
                 aria-labelledby="headingMaster" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Data Sekolah:</h6>
@@ -148,10 +153,15 @@
                 </div>
             </div>
         </li>
-    @endif
 
-    <!-- Divider -->
-    <hr class="sidebar-divider">
+        <!-- Nav Item - Activity Log -->
+        <li class="nav-item {{ request()->routeIs('activity.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('activity.index') }}">
+                <i class="fas fa-fw fa-history"></i>
+                <span>Activity Log</span>
+            </a>
+        </li>
+    @endif
 
     <!-- Heading -->
     <div class="sidebar-heading">
@@ -170,9 +180,19 @@
     <li class="nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('profile.edit') }}">
             <i class="fas fa-fw fa-user-circle"></i>
-            <span>Profil & Password</span>
+            <span>Profil &amp; Password</span>
         </a>
     </li>
+
+    @if ($currentUser && $currentUser->isSuperAdmin())
+        <!-- Nav Item - School Information -->
+        <li class="nav-item {{ request()->routeIs('sekolah.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('sekolah.edit') }}">
+                <i class="fas fa-fw fa-school"></i>
+                <span>Informasi Sekolah</span>
+            </a>
+        </li>
+    @endif
 
     <!-- Nav Item - Report Bug / Request Fitur -->
     <li class="nav-item {{ request()->routeIs('report.*') ? 'active' : '' }}">
@@ -182,5 +202,14 @@
         </a>
     </li>
 
+    @if ($currentUser)
+        <!-- Sidebar Footer - Logout -->
+        <li class="sidebar-footer">
+            <a class="sidebar-logout" href="#" data-toggle="modal" data-target="#logoutModal">
+                <i class="fas fa-sign-out-alt fa-fw"></i>
+                <span>Keluar</span>
+            </a>
+        </li>
+    @endif
 
 </ul>

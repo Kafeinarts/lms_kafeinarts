@@ -95,6 +95,11 @@
 
                     @if ($user && $user->isSuperAdmin())
                         <li class="list-group-item p-0 mb-1 mt-2 pt-2 border-top">
+                            <a href="{{ route('sekolah.edit') }}" class="d-flex align-items-center text-gray-800">
+                                <i class="fas fa-fw fa-school mr-2 text-danger"></i> Informasi Sekolah
+                            </a>
+                        </li>
+                        <li class="list-group-item p-0 mb-1">
                             <a href="{{ route('users.index') }}" class="d-flex align-items-center text-gray-800">
                                 <i class="fas fa-fw fa-users-cog mr-2 text-danger"></i> Kelola Akun
                             </a>

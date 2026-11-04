@@ -74,6 +74,9 @@
                     <a class="dropdown-item" href="{{ route('users.create') }}">
                         <i class="fas fa-user-plus fa-sm fa-fw mr-2 text-gray-400"></i> Registrasi Akun
                     </a>
+                    <a class="dropdown-item" href="{{ route('sekolah.edit') }}">
+                        <i class="fas fa-school fa-sm fa-fw mr-2 text-gray-400"></i> Informasi Sekolah
+                    </a>
                     <a class="dropdown-item" href="{{ route('guru.index') }}">
                         <i class="fas fa-chalkboard-teacher fa-sm fa-fw mr-2 text-gray-400"></i> Data Guru
                     </a>
