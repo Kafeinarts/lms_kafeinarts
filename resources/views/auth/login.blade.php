@@ -45,7 +45,8 @@
                             <div class="col-lg-6">
                                 <div class="p-4 p-md-5">
                                     <div class="text-center mb-4">
-                                        <div class="sidebar-brand-icon rotate-n-15 text-primary mb-2" style="font-size: 2.2rem;">
+                                        <div class="sidebar-brand-icon rotate-n-15 text-primary mb-2"
+                                            style="font-size: 2.2rem;">
                                             <i class="fas fa-briefcase"></i>
                                         </div>
                                         <h1 class="h4 text-gray-900 font-weight-bold">StaffWork</h1>
@@ -53,25 +54,30 @@
                                     </div>
 
                                     @if (session('success'))
-                                        <div class="alert alert-success alert-dismissible fade show small" role="alert">
+                                        <div class="alert alert-success alert-dismissible fade show small"
+                                            role="alert">
                                             <i class="fas fa-check-circle mr-1"></i> {{ session('success') }}
-                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <button type="button" class="close" data-dismiss="alert"
+                                                aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
                                     @endif
 
                                     @if (session('error'))
-                                        <div class="alert alert-danger alert-dismissible fade show small" role="alert">
+                                        <div class="alert alert-danger alert-dismissible fade show small"
+                                            role="alert">
                                             <i class="fas fa-exclamation-circle mr-1"></i> {{ session('error') }}
-                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <button type="button" class="close" data-dismiss="alert"
+                                                aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
                                     @endif
 
                                     @if ($errors->any())
-                                        <div class="alert alert-danger alert-dismissible fade show small" role="alert">
+                                        <div class="alert alert-danger alert-dismissible fade show small"
+                                            role="alert">
                                             <i class="fas fa-exclamation-triangle mr-1"></i>
                                             @if ($errors->has('email'))
                                                 {{ $errors->first('email') }}
@@ -80,7 +86,8 @@
                                             @else
                                                 Harap periksa kembali form login Anda.
                                             @endif
-                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <button type="button" class="close" data-dismiss="alert"
+                                                aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
@@ -89,42 +96,39 @@
                                     <form class="user" method="POST" action="{{ route('login') }}">
                                         @csrf
                                         <div class="form-group">
-                                            <input type="email"
-                                                name="email"
+                                            <input type="email" name="email"
                                                 class="form-control form-control-user @error('email') is-invalid @enderror"
-                                                id="exampleInputEmail"
-                                                aria-describedby="emailHelp"
-                                                value="{{ old('email') }}"
-                                                placeholder="Alamat Email..."
-                                                required
+                                                id="exampleInputEmail" aria-describedby="emailHelp"
+                                                value="{{ old('email') }}" placeholder="Alamat Email..." required
                                                 autofocus>
                                         </div>
                                         <div class="form-group">
-                                            <input type="password"
-                                                name="password"
+                                            <input type="password" name="password"
                                                 class="form-control form-control-user @error('password') is-invalid @enderror"
-                                                id="exampleInputPassword"
-                                                placeholder="Kata Sandi..."
-                                                required>
+                                                id="exampleInputPassword" placeholder="Kata Sandi..." required>
                                         </div>
 
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" name="remember" class="custom-control-input" id="customCheck" {{ old('remember') ? 'checked' : '' }}>
+                                                <input type="checkbox" name="remember" class="custom-control-input"
+                                                    id="customCheck" {{ old('remember') ? 'checked' : '' }}>
                                                 <label class="custom-control-label" for="customCheck">Ingat Saya</label>
                                             </div>
                                         </div>
-                                        <button type="submit" class="btn btn-primary btn-user btn-block font-weight-bold">
+                                        <button type="submit"
+                                            class="btn btn-primary btn-user btn-block font-weight-bold">
                                             <i class="fas fa-sign-in-alt mr-1"></i> Masuk (Login)
                                         </button>
                                     </form>
 
                                     <hr>
 
+                                    {{--                                     
                                     <div class="text-center">
                                         <span class="small text-muted">Belum memiliki akun?</span>
                                         <a class="small font-weight-bold ml-1" href="{{ route('register') }}">Buat Akun Baru!</a>
-                                    </div>
+                                    </div> 
+                                    --}}
                                 </div>
                             </div>
                         </div>

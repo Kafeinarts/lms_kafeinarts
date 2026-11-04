@@ -34,7 +34,9 @@
             <div class="modal-header">
                 <div>
                     <h6 class="modal-title font-weight-bold text-gray-900 mb-0" id="mobileMenuSheetLabel">Menu Cepat</h6>
-                    <div class="small text-muted">{{ $user->name }} &bull; {{ $user->role_name }}</div>
+                    @if ($user)
+                        <div class="small text-muted">{{ $user->name }} &bull; {{ $user->role_name }}</div>
+                    @endif
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Tutup">
                     <span aria-hidden="true">&times;</span>
@@ -83,7 +85,7 @@
                         </a>
                     </li>
 
-                    @if ($user->isTeacher())
+                    @if ($user && $user->isTeacher())
                         <li class="list-group-item p-0 mb-1">
                             <a href="{{ route('pelanggaran.index') }}" class="d-flex align-items-center text-gray-800">
                                 <i class="fas fa-fw fa-exclamation-triangle mr-2 text-warning"></i> Pelanggaran Siswa
@@ -91,7 +93,7 @@
                         </li>
                     @endif
 
-                    @if ($user->isSuperAdmin())
+                    @if ($user && $user->isSuperAdmin())
                         <li class="list-group-item p-0 mb-1 mt-2 pt-2 border-top">
                             <a href="{{ route('users.index') }}" class="d-flex align-items-center text-gray-800">
                                 <i class="fas fa-fw fa-users-cog mr-2 text-danger"></i> Kelola Akun

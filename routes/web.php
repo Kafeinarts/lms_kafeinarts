@@ -188,6 +188,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/exams/{exam}', [ExamController::class, 'show'])->name(
         'exams.show'
     );
+    Route::post('/exams/{exam}/submit', [
+        ExamController::class,
+        'submit',
+    ])->name('exams.submit');
 
     // Super Admin Only: User Management, Master Data & Import
     Route::middleware('superadmin')->group(function () {

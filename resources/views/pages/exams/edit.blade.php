@@ -37,6 +37,21 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="mapel_id" class="font-weight-bold text-gray-700">Mata Pelajaran</label>
+                            <select name="mapel_id" id="mapel_id" class="form-control @error('mapel_id') is-invalid @enderror">
+                                <option value="">— Tanpa Mapel —</option>
+                                @foreach ($mapels as $mapel)
+                                    <option value="{{ $mapel->id }}" {{ (string) old('mapel_id', $exam->mapel_id) === (string) $mapel->id ? 'selected' : '' }}>
+                                        {{ $mapel->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('mapel_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
                             <label for="type" class="font-weight-bold text-gray-700">Jenis <span class="text-danger">*</span></label>
                             <select name="type" id="type" class="form-control @error('type') is-invalid @enderror" required>
                                 <option value="tugas" {{ old('type', $exam->type) === 'tugas' ? 'selected' : '' }}>Tugas</option>

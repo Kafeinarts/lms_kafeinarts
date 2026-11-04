@@ -15,6 +15,7 @@ class Exam extends Model
 
     protected $fillable = [
         'user_id',
+        'mapel_id',
         'title',
         'description',
         'type',
@@ -43,6 +44,24 @@ class Exam extends Model
     public function questions(): HasMany
     {
         return $this->hasMany(Question::class)->orderBy('order');
+    }
+
+    public function mapel(): BelongsTo
+    {
+        return $this->belongsTo(Mapel::class);
+    }
+
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(ExamSubmission::class)->with('student')->latest('submitted_at');
+    }
+
+    /**
+     * Get the current user's submission for this exam, if any.
+     */
+    public function submissionFor(User $user): ?ExamSubmission
+    {
+        return $this->submissions()->where('user_id', $user->id)->first();
     }
 
     public function getIsTugasAttribute(): bool

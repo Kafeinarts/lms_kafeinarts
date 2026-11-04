@@ -2,9 +2,12 @@
 
     @php
         $currentUser = Auth::user();
-        // once(): hasil query di-memo per request, aman bila partial dirender ulang
-        $unreadCount = once(fn () => $currentUser->unreadNotifications()->count());
-        $latestNotifications = once(fn () => $currentUser->notifications()->latest('created_at')->take(5)->get());
+        // once(): hasil query di-memo per request, aman bila partial dirender ulang.
+        // Dijaga null agar halaman error (mis. 403) tetap ter-render untuk tamu tanpa sesi.
+        $unreadCount = $currentUser ? once(fn () => $currentUser->unreadNotifications()->count()) : 0;
+        $latestNotifications = $currentUser
+            ? once(fn () => $currentUser->notifications()->latest('created_at')->take(5)->get())
+            : collect();
     @endphp
 
     <!-- Brand (mobile) -->
@@ -53,7 +56,7 @@
                     <i class="fas fa-chalkboard fa-sm fa-fw mr-2 text-gray-400"></i> Kelas Diajar
                 </a>
 
-                @if ($currentUser->isTeacher())
+                @if ($currentUser && $currentUser->isTeacher())
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ route('materis.create') }}">
                         <i class="fas fa-plus-circle fa-sm fa-fw mr-2 text-gray-400"></i> Upload Materi
@@ -63,7 +66,7 @@
                     </a>
                 @endif
 
-                @if ($currentUser->isSuperAdmin())
+                @if ($currentUser && $currentUser->isSuperAdmin())
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ route('users.index') }}">
                         <i class="fas fa-users-cog fa-sm fa-fw mr-2 text-gray-400"></i> Kelola Akun
@@ -140,6 +143,7 @@
         <div class="topbar-divider d-none d-sm-block"></div>
 
         <!-- Nav Item - User Information -->
+        @if ($currentUser)
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -168,7 +172,7 @@
                     <i class="fas fa-bug fa-sm fa-fw mr-2 text-gray-400"></i>
                     Laporkan Bug / Request
                 </a>
-                @if ($currentUser->isSuperAdmin())
+                @if ($currentUser && $currentUser->isSuperAdmin())
                     <a class="dropdown-item" href="{{ route('users.index') }}">
                         <i class="fas fa-users-cog fa-sm fa-fw mr-2 text-gray-400"></i>
                         Kelola Pengguna
@@ -181,6 +185,14 @@
                 </a>
             </div>
         </li>
+        @else
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('login') }}">
+                    <span class="mr-2 d-none d-lg-inline text-gray-600 small font-weight-bold">Masuk</span>
+                    <i class="fas fa-sign-in-alt fa-fw"></i>
+                </a>
+            </li>
+        @endif
 
     </ul>
 

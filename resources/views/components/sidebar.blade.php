@@ -59,7 +59,7 @@
         </a>
     </li>
 
-    @if (Auth::user()->isTeacher())
+    @if (Auth::check() && Auth::user()->isTeacher())
         <!-- Nav Item - Pelanggaran & Pemanggilan -->
         <li class="nav-item {{ request()->routeIs('pelanggaran.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('pelanggaran.index') }}">
@@ -69,7 +69,7 @@
         </li>
     @endif
 
-    @if (Auth::user()->isSuperAdmin())
+    @if (Auth::check() && Auth::user()->isSuperAdmin())
         <!-- Divider -->
         <hr class="sidebar-divider">
 

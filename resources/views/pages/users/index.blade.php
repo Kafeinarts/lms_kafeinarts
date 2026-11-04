@@ -31,7 +31,6 @@
                             <th style="width: 70px;" class="text-center">Foto</th>
                             <th>Nama Lengkap</th>
                             <th>Alamat Email</th>
-                            <th style="width: 150px;">Bidang / Keahlian</th>
                             <th style="width: 130px;" class="text-center">Role / Hak Akses</th>
                             <th style="width: 190px;" class="text-center">Kata Sandi</th>
                             <th style="width: 150px;">Tanggal Daftar</th>
@@ -56,15 +55,6 @@
                                     @endif
                                 </td>
                                 <td class="align-middle text-muted">{{ $u->email }}</td>
-                                <td class="align-middle small">
-                                    @if ($u->bidang)
-                                        <span class="badge badge-light border px-2 py-1">
-                                            <i class="fas fa-briefcase fa-sm mr-1 text-gray-500"></i>{{ $u->bidang }}
-                                        </span>
-                                    @else
-                                        <span class="text-muted">-</span>
-                                    @endif
-                                </td>
                                 <td class="text-center align-middle">
                                     <span class="badge {{ $u->role_badge_class }} px-2 py-1">
                                         {{ $u->role_name }}

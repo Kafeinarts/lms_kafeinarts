@@ -15,24 +15,75 @@
         @endif
     </div>
 
+    <!-- Tabs: Tugas & Ujian terpisah -->
+    @php
+        $tabParams = request()->query();
+        unset($tabParams['page']);
+    @endphp
+    <ul class="nav nav-tabs mb-3" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link {{ $type === 'tugas' ? 'active' : '' }}"
+                href="{{ route('exams.index', array_merge($tabParams, ['type' => 'tugas'])) }}">
+                <i class="fas fa-tasks mr-1"></i> Tugas
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ $type === 'ujian' ? 'active' : '' }}"
+                href="{{ route('exams.index', array_merge($tabParams, ['type' => 'ujian'])) }}">
+                <i class="fas fa-file-signature mr-1"></i> Ujian
+            </a>
+        </li>
+    </ul>
+
     <!-- Filters -->
     <div class="card shadow mb-4">
-        <div class="card-body py-2">
-            <form action="{{ route('exams.index') }}" method="GET" class="form-inline">
-                <div class="input-group mr-2 mb-2 mb-sm-0">
-                    <input type="text" name="q" class="form-control bg-light border-0 small"
-                        placeholder="Cari judul..." value="{{ request('q') }}">
+        <div class="card-body py-3">
+            <form action="{{ route('exams.index') }}" method="GET" class="form-row align-items-end">
+                <input type="hidden" name="type" value="{{ $type }}">
+                <div class="form-group col-lg-4 col-md-6 mb-2 mb-md-0">
+                    <label for="q" class="small font-weight-bold text-gray-700 mb-1">Cari Judul</label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" name="q" id="q" class="form-control bg-light"
+                            placeholder="Cari judul tugas/ujian..." value="{{ request('q') }}">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search fa-sm"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="input-group mr-2 mb-2 mb-sm-0">
-                    <select name="type" class="form-control bg-light border-0 small">
-                        <option value="">Semua Jenis</option>
-                        <option value="tugas" {{ request('type') === 'tugas' ? 'selected' : '' }}>Tugas</option>
-                        <option value="ujian" {{ request('type') === 'ujian' ? 'selected' : '' }}>Ujian</option>
+                <div class="form-group col-lg-3 col-md-6 mb-2 mb-md-0">
+                    <label for="mapel" class="small font-weight-bold text-gray-700 mb-1">Mata Pelajaran</label>
+                    <select name="mapel" id="mapel" class="form-control form-control-sm bg-light"
+                        onchange="document.getElementById('guru').value=''; this.form.submit();">
+                        <option value="">Semua Mapel</option>
+                        @foreach ($mapels as $mapel)
+                            <option value="{{ $mapel->id }}" {{ (string) request('mapel') === (string) $mapel->id ? 'selected' : '' }}>
+                                {{ $mapel->name }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
-                <button class="btn btn-primary btn-sm mb-2 mb-sm-0" type="submit">
-                    <i class="fas fa-filter fa-sm"></i> Filter
-                </button>
+                <div class="form-group col-lg-3 col-md-6 mb-2 mb-md-0">
+                    <label for="guru" class="small font-weight-bold text-gray-700 mb-1">Guru</label>
+                    <select name="guru" id="guru" class="form-control form-control-sm bg-light"
+                        onchange="this.form.submit();">
+                        <option value="">Semua Guru</option>
+                        @foreach ($teachers as $teacher)
+                            <option value="{{ $teacher->id }}" {{ (string) request('guru') === (string) $teacher->id ? 'selected' : '' }}>
+                                {{ $teacher->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @unless (request('mapel'))
+                        <small class="form-text text-muted mb-0">Pilih mapel untuk menampilkan guru pengampu.</small>
+                    @endunless
+                </div>
+                <div class="form-group col-lg-2 col-md-6 mb-0">
+                    <button type="submit" class="btn btn-primary btn-sm btn-block">
+                        <i class="fas fa-filter fa-sm mr-1"></i> Terapkan
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -40,7 +91,7 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex align-items-center justify-content-between">
             <h6 class="m-0 font-weight-bold text-primary">
-                <i class="fas fa-clipboard-list mr-1"></i> Daftar Tugas & Ujian
+                <i class="fas fa-clipboard-list mr-1"></i> Daftar {{ $type === 'ujian' ? 'Ujian' : 'Tugas' }}
             </h6>
             <span class="badge badge-light border">Total: {{ $exams->total() }}</span>
         </div>
@@ -51,7 +102,7 @@
                         <tr>
                             <th style="width: 60px;" class="text-center">No</th>
                             <th>Judul</th>
-                            <th style="width: 90px;" class="text-center">Jenis</th>
+                            <th style="width: 130px;">Mata Pelajaran</th>
                             <th style="width: 90px;" class="text-center">Jumlah Soal</th>
                             <th style="width: 110px;" class="text-center">Durasi</th>
                             <th style="width: 120px;">Pembuat</th>
@@ -70,8 +121,14 @@
                                         <br><small class="text-muted font-weight-normal">{{ \Str::limit($exam->description, 60) }}</small>
                                     @endif
                                 </td>
-                                <td class="text-center align-middle">
-                                    <span class="badge {{ $exam->type_badge_class }}">{{ $exam->type_label }}</span>
+                                <td class="align-middle small">
+                                    @if ($exam->mapel)
+                                        <span class="badge badge-primary">
+                                            <i class="fas fa-book mr-1"></i>{{ $exam->mapel->name }}
+                                        </span>
+                                    @else
+                                        <span class="text-muted">Belum ditentukan</span>
+                                    @endif
                                 </td>
                                 <td class="text-center align-middle">
                                     <span class="badge badge-light border">{{ $exam->questions_count }} soal</span>
