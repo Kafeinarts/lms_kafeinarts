@@ -26,7 +26,7 @@
                     <form action="{{ route('pelanggaran.store') }}" method="POST">
                         @csrf
 
-                        <div class="form-group">
+{{--                         <div class="form-group">
                             <label class="font-weight-bold text-gray-700">Kelas <span class="text-danger">*</span></label>
                             <select name="kelas_id" id="kelas_id" class="form-control @error('kelas_id') is-invalid @enderror" required onchange="fetchStudents(this.value)">
                                 <option value="" disabled {{ old('kelas_id') ? '' : 'selected' }}>-- Pilih Kelas --</option>
@@ -40,7 +40,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-
+ --}}
                         <script>
                             function fetchStudents(kelasId) {
                                 $.ajax({

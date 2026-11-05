@@ -36,16 +36,14 @@ class ViolationController extends Controller
         $query = User::where('role', 'murid')->with('kelas');
         if ($kelasId) {
             $query->where('kelas_id', $kelasId);
-        }
-
-        return view('pages.pelanggaran.create', [
+        }		return view('pages.pelanggaran.create', [
             'students' => $query->orderBy('name')->get(),
             'kelasId' => $kelasId,
             'kelasOptions' => User::where('role', 'murid')
                 ->with('kelas')
-                ->distinct()
-                ->pluck('kelas.name', 'kelas_id')
-                ->mapWithIds(),
+                ->select('kelas_id')->distinct()
+                ->pluck('kelas_id')
+                ->mapWithKeys(fn (string $kelasId): array => [$kelasId => $kelasId]),
         ]);
     }
 
